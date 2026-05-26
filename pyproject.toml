@@ -1,0 +1,5 @@
+[project]
+name = "infrastructure-contracts-engine"
+version = "0.0.0"
+description = "Infrastructure Contracts Engine"
+readme = "README.md"
