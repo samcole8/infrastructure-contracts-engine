@@ -4,3 +4,7 @@ class System:
         self.name = name
         self.username = username
         self.password = password
+
+class LocalSystem(System):
+    def connect(self):
+        pass
