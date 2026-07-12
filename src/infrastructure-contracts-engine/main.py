@@ -1,0 +1,71 @@
+import threading
+from time import sleep
+
+INTERVAL=60
+
+class System:
+
+    def __init__(self, identity):
+        self.name = name
+
+class Capability:
+    def __init__(self, system):
+        self.system = system
+
+class Contract:
+    def __init__(self, system, expression):
+        self.system = system
+        self.expression = expression
+
+class Engine:
+
+    def __init__(self):
+        self._knowledge_cache = None
+        self.contracts = []
+    
+    def _monitor(self):
+        # Run capability checks
+        pass
+
+    def _analyse(self):
+        # Evaluate contracts
+        pass
+
+    def _plan(self):
+        # Decide what to do about violations if they occur, add tasks to queue
+        pass
+
+    def _execute(self):
+        # Respond to violations in queue
+        pass
+
+    def _knowledge(self):
+        # Update knowledge base
+        if self._knowledge_cache:
+            self.contracts = self._knowledge_cache
+            self._knowledge_cache = None
+
+    def listen(self):
+        # Start input API
+        sleep(0.1)
+        pass
+
+    def start(self):
+        # Start MAPE loop
+        while True:
+            self._monitor()
+            self._analyse()
+            self._plan()
+            self._execute()
+            self._knowledge()
+            sleep(INTERVAL)
+
+def main():
+    engine = Engine()
+    engine.listen()
+    threading.Thread(target=engine.start, daemon=True).start()
+    while True:
+        engine.listen()
+
+if __name__ == "__main__":
+    main()
