@@ -5,17 +5,23 @@ INTERVAL=60
 
 class System:
 
-    def __init__(self, name):
+    def __init__(self, name, username=None, password=None):
         self.name = name
+        self.username = username
+        self.password = password
 
 class Capability:
     def __init__(self, system):
         self.system = system
 
 class Contract:
-    def __init__(self, system, expression):
-        self.system = system
+    def __init__(self, src, dst, expression):
+        self.src = src
+        self.dst = dst
         self.expression = expression
+    
+    def evaluate(self):
+        return self.expression(self.src, self.dst)
 
 class Engine:
 
