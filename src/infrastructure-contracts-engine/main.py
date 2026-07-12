@@ -5,7 +5,7 @@ INTERVAL=60
 
 class System:
 
-    def __init__(self, identity):
+    def __init__(self, name):
         self.name = name
 
 class Capability:
@@ -48,7 +48,6 @@ class Engine:
     def listen(self):
         # Start input API
         sleep(0.1)
-        pass
 
     def start(self):
         # Start MAPE loop
