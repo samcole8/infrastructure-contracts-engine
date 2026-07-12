@@ -61,10 +61,8 @@ class Engine:
 
 def main():
     engine = Engine()
-    engine.listen()
-    threading.Thread(target=engine.start, daemon=True).start()
-    while True:
-        engine.listen()
+    threading.Thread(target=engine.listen, daemon=True).start()
+    engine.start()
 
 if __name__ == "__main__":
     main()
