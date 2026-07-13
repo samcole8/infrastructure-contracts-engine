@@ -3,9 +3,9 @@ from time import sleep
 class Engine:
 
     def __init__(self, interval):
-        self._knowledge_cache = None
-        self.requirements = []
         self.interval = interval
+        self.systems = []
+        self.probes = []
     
     def _monitor(self):
         # Run capability checks
@@ -23,20 +23,8 @@ class Engine:
         # Respond to violations in queue
         pass
 
-    def _knowledge(self):
+    def reload(self, systems, probes):
         # Update knowledge base
-        pass
-
-    def listen(self):
-        # Start input API
-        sleep(0.1)
-
-    def start(self):
-        # Start MAPE loop
-        while True:
-            self._monitor()
-            self._analyse()
-            self._plan()
-            self._execute()
-            self._knowledge()
-            sleep(self.interval)
+        self.systems = systems
+        self.probes = probes
+        return True
