@@ -1,13 +1,12 @@
-import threading
-
+from ice.api import API
 from ice.engine import Engine
-from ice.system import System
 
-INTERVAL=60
+INTERVAL = 60
+
 
 def main():
-    engine = Engine(interval=INTERVAL)
-    threading.Thread(target=engine.listen, daemon=True).start()
+    api = API()
+    engine = Engine(INTERVAL)
     engine.start()
 
 if __name__ == "__main__":
