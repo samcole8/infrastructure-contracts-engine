@@ -31,14 +31,3 @@ class Not:
     def evaluate(self):
         result = self.operand.evaluate()
         return None if result is None else not result
-
-
-class Contract:
-    def __init__(self, name, src, dst, expression):
-        self.name = name
-        self.src = src
-        self.dst = dst
-        self.expression = expression
-
-    def evaluate(self):
-        return self.expression.evaluate()
