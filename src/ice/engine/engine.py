@@ -4,7 +4,7 @@ class Engine:
 
     def __init__(self, interval):
         self._knowledge_cache = None
-        self.contracts = []
+        self.requirements = []
         self.interval = interval
     
     def _monitor(self):
@@ -25,9 +25,7 @@ class Engine:
 
     def _knowledge(self):
         # Update knowledge base
-        if self._knowledge_cache:
-            self.contracts = self._knowledge_cache
-            self._knowledge_cache = None
+        pass
 
     def listen(self):
         # Start input API
