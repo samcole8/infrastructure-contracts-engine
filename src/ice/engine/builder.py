@@ -4,7 +4,7 @@ import re
 
 from ice.scm import And, Or, Not
 from ice.scm import System, Capability, Requirement
-from ice.engine.probe import Probe
+from ice.engine.probe import Probe, Connection, LocalConnection
 
 
 TOKEN_RE = re.compile(r'\(|\)|and|or|not|[A-Za-z_][A-Za-z0-9_]*')
@@ -66,30 +66,47 @@ def build(configuration):
 
     systems_by_name = {}
     capabilities_by_name = {}
-    probes = []
+    connections_by_name = {}
+
+    connections_by_name["ice"] = LocalConnection()
 
     for entry in configuration["systems"]:
-      name = entry["name"]
-      systems_by_name[name] = (System(name))
+        # Build system
+        name = entry["name"]
+        system = System(name)
+        systems_by_name[name] = system
+
+        # Build connection
+        target = entry.get("target", None)  
+        username = entry.get("username", None)
+        password = entry.get("password", None)
+        connections_by_name[name] = Connection(system, target, username, password)
 
     for entry in configuration["capabilities"]:
-
-        # Create capability
+        # Build capability
         name = entry["name"]
         src = systems_by_name[entry["src"]]
         dst = systems_by_name[entry["dst"]]
         capability = Capability(name, src, dst)
         
-        # Check for probe
-        check = entry.get("check", None)
-        if check:
-            # Create probe
+        # Check for script
+        script = entry.get("script", None)
+        if script:
+            # Resolve origin
             origin = entry.get("origin", "src")
-            probes.append(Probe(capability, check, origin))
+            match origin:
+                case "src":
+                    connection = connections_by_name[capability.src.name]
+                case "dst":
+                    connection = connections_by_name[capability.dst.name]
+                case "ice":
+                    connection = connections_by_name["ice"]
+            # Build probe and add to connection
+            connection.probes.append(Probe(capability, script))
+
         else:
-            #  Set stateits
-            state = entry.get("state", None)
-            capability.state = state
+            # Set immutable state
+            capability.state = entry.get("state", None)
 
         # Add capability to system
         src.capabilities.append(capability)
@@ -107,4 +124,4 @@ def build(configuration):
         # Add requirement to system
         src.requirements.append(Requirement(name, src, contract))
 
-    return tuple(systems_by_name.values()), probes
+    return tuple(systems_by_name.values()), tuple(connections_by_name.values())

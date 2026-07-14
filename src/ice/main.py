@@ -42,8 +42,8 @@ def main():
 
     while True:
         # Get systems and probes
-        systems, probes = build(CONFIG) # API config input blocks once implemented
-        if not engine.reload(systems, probes):
+        systems, connections = build(CONFIG) # API config input blocks once implemented
+        if not engine.reload(systems, connections):
             # Failure, invoke API response
             break
 
