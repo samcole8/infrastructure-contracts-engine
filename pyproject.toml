@@ -3,6 +3,9 @@ name = "infrastructure-contracts-engine"
 version = "0.0.0"
 description = "Infrastructure Contracts Engine"
 readme = "README.md"
+dependencies = [
+    "Fabric==3.2.3",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
