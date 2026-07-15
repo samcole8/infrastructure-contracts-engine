@@ -12,9 +12,9 @@ TEMP_CONFIG = {
         {"name": "c3", "src": "s1", "dst": "s2", "state": True},
     ],
     "requirements": [
-        {"name": "r1", "src": "s2",
+        {"name": "r1", "src": "s2", "dst": "s1",
             "contract": "((c1 or c2) and c3)"},
-        {"name": "r2", "src": "s2",
+        {"name": "r2", "src": "s2", "dst": "s1",
             "contract": "c2"},
     ],
 }
