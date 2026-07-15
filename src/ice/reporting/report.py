@@ -1,11 +1,36 @@
-def resolution(r):
-    return f"RESOLUTION: {r.name}       (Requirement has entered a fulfilled state)"
+import json, time
 
-def rejection(r):
-    return f"REJECTION: {r.name}        (Requirement depends on capabilities that are declared and either violated or errored)"
+from ice.model import Capability, And, Or, Not
+
+def render(node):
+    if isinstance(node, Capability):
+        return f"({node.name}:={node.state})"
+    if isinstance(node, And):
+        return "(" + " and ".join(render(o) for o in node.operands) + ")"
+    if isinstance(node, Or):
+        return "(" + " or ".join(render(o) for o in node.operands) + ")"
+    if isinstance(node, Not):
+        return f"not {render(node.operand)}"
+
+def line(level, r):
+    return json.dumps({
+        "timestamp": time.time(),
+        "level": level,
+        "message": f"{r.name}: {level.lower()}",
+        "requirement": r.name,
+        "src": r.src.name,
+        "dst": r.dst.name,
+        "trace": render(r.contract),
+    })
+
+def resolution(r):
+    return line("OK", r)
 
 def violation(r):
-    return f"VIOLATION: {r.name}        (Requirement has entered a violated state)"
+    return line("VIOLATED", r)
 
 def error(r):
-    return f"ERROR: {r.name}            (Requirement could not be evaluated due to errors)"
+    return line("UNRESOLVED", r)
+
+def rejection(r):
+    return line("BLOCKING", r)
