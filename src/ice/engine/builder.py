@@ -2,16 +2,19 @@
 
 import re
 
-from ice.scm import And, Or, Not
-from ice.scm import System, Capability, Requirement
-from ice.engine.probe import Probe, Connection, LocalConnection
-
+from ice.engine.model import (
+    And, Or, Not,
+    Capability, DynamicCapability,
+    RemoteSystem, System, LocalSystem,
+    Requirement
+    )
 
 TOKEN_RE = re.compile(r'\(|\)|and|or|not|[A-Za-z_][A-Za-z0-9_]*')
+KEYWORDS = {"and", "or", "not", "(", ")"}
+
 
 def tokenise(expr):
     return TOKEN_RE.findall(expr)
-
 
 class Parser:
     """Build contract from tokenised expression."""
@@ -58,70 +61,74 @@ class Parser:
         self.advance()
         return self.capabilities_by_name[tok]
 
-def build_contract(contract_expression, capabilities_by_name):
-    tokens = tokenise(contract_expression)
-    return Parser(tokens, capabilities_by_name).parse_expr()
-
 def build(configuration):
 
     systems_by_name = {}
     capabilities_by_name = {}
-    connections_by_name = {}
 
-    connections_by_name["ice"] = LocalConnection()
+    local_system = LocalSystem("ice")
 
     for entry in configuration["systems"]:
         # Build system
         name = entry["name"]
-        system = System(name)
+        
+        # Set connection attributes
+        if target := entry.get("target", None):
+            username = entry["username"]
+            password = entry["password"]
+            system = RemoteSystem(name, target, username, password)
+        else:
+            system = System(name)
+
         systems_by_name[name] = system
 
-        # Build connection
-        target = entry.get("target", None)  
-        username = entry.get("username", None)
-        password = entry.get("password", None)
-        connections_by_name[name] = Connection(system, target, username, password)
-
     for entry in configuration["capabilities"]:
-        # Build capability
+        # Get src/dst systems
         name = entry["name"]
         src = systems_by_name[entry["src"]]
         dst = systems_by_name[entry["dst"]]
-        capability = Capability(name, src, dst)
-        
-        # Check for script
-        script = entry.get("script", None)
-        if script:
-            # Resolve origin
-            origin = entry.get("origin", "src")
-            match origin:
-                case "src":
-                    connection = connections_by_name[capability.src.name]
-                case "dst":
-                    connection = connections_by_name[capability.dst.name]
-                case "ice":
-                    connection = connections_by_name["ice"]
-            # Build probe and add to connection
-            connection.probes.append(Probe(capability, script))
 
+        # Set probe attributes
+        if script := entry.get("script", None):
+            cmd = script
+            # Resolve origin
+            match entry.get("origin", "src"):
+                case "src":
+                    origin = src
+                case "dst":
+                    origin = dst
+                case "ice":
+                    origin = local_system
+            capability = DynamicCapability(name, src, dst, origin, cmd)
         else:
             # Set immutable state
-            capability.state = entry.get("state", None)
-
-        # Add capability to system
-        src.capabilities.append(capability)
+            origin = src
+            capability = Capability(name, src, dst, origin)
+            capability.state = entry["state"]
 
         # Add capability to capabilities_by_name
         capabilities_by_name[name] = capability
+        origin.probes.append(capability)
 
     for entry in configuration["requirements"]:
-
-        # Create requirement
         name = entry["name"]
         src = systems_by_name[entry["src"]]
-        contract = build_contract(entry["contract"], capabilities_by_name)
+
+        # Create contract
+        tokens = tokenise(entry["contract"])
+        contract = Parser(tokens, capabilities_by_name).parse_expr()
+
+        # Get capability list
+        capability_names = [t for t in tokens if t not in KEYWORDS]
+        capabilities = [capabilities_by_name[n] for n in capability_names]
 
         # Add requirement to system
-        src.requirements.append(Requirement(name, src, contract))
+        requirement = Requirement(name, src, capabilities, contract)
+        src.requirements.append(requirement)
 
-    return tuple(systems_by_name.values()), tuple(connections_by_name.values())
+        # Create requirement-capability mapping
+        for capability in capabilities:
+            requirement.capabilities.append(capability)
+            capability.requirements.append(requirement)
+
+    return list(systems_by_name.values()) + [local_system]
