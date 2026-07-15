@@ -15,5 +15,5 @@ class DynamicCapability(Capability):
 
     def probe(self, connection):
         old = self.state
-        self.state = connection(self.cmd)
+        self.state = connection(self)
         return self.requirements if self.state != old else set()
