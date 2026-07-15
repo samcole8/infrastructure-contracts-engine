@@ -113,6 +113,7 @@ def build(configuration):
     for entry in configuration["requirements"]:
         name = entry["name"]
         src = systems_by_name[entry["src"]]
+        dst = systems_by_name[entry["dst"]]
 
         # Create contract
         tokens = tokenise(entry["contract"])
@@ -123,7 +124,7 @@ def build(configuration):
         capabilities = [capabilities_by_name[n] for n in capability_names]
 
         # Add requirement to system
-        requirement = Requirement(name, src, capabilities, contract)
+        requirement = Requirement(name, src, dst, capabilities, contract)
         src.requirements.append(requirement)
 
         # Create requirement-capability mapping
