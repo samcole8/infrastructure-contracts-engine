@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from fabric import Connection
 
 from ice.model import System as ModelSystem
+from ice.engine.model.capability import DynamicCapability, Capability
 
 class System(ModelSystem):
 
