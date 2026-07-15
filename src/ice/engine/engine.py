@@ -27,8 +27,7 @@ class Engine:
         else:
             self.systems = systems
             print("RELOAD SUCCESS")
-        
-        self.start()
+            self.start() # de-indent when engine is threaded
         return errors
 
     def start(self):

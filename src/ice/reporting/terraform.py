@@ -1,2 +1,2 @@
 def response(errors):
-    pass
+    return errors
