@@ -1,30 +1,41 @@
-from time import sleep
+import threading
+import time
+
+from ice.engine.mape import tick
 
 class Engine:
-
+    
     def __init__(self, interval):
         self.interval = interval
         self.systems = []
-        self.probes = []
-    
-    def _monitor(self):
-        # Run capability checks
-        pass
+        self.running = False
 
-    def _analyse(self):
-        # Evaluate contracts
-        pass
+    def loop(self):
+        while self.running:
+            print(f"WAITING {self.interval}")
+            time.sleep(self.interval)
+            tick(self.systems)
 
-    def _plan(self):
-        # Decide what to do about violations if they occur, add tasks to queue
-        pass
+    def reload(self, systems):
+        print("ENGINE RELOAD")
+        self.stop()
 
-    def _execute(self):
-        # Respond to violations in queue
-        pass
+        errors = tick(systems)
+        
+        if errors:
+            print("RELOAD FAIL")
+        else:
+            self.systems = systems
+            print("RELOAD SUCCESS")
+        
+        self.start()
+        return errors
 
-    def reload(self, systems, probes):
-        # Update knowledge base
-        self.systems = systems
-        self.probes = probes
-        return True
+    def start(self):
+        self.running = True
+        print("ENGINE START")
+        self.loop()
+
+    def stop(self):
+        print("ENGINE STOP")
+

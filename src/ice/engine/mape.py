@@ -44,10 +44,13 @@ def execute(resolutions, violations, errors, rejections):
         print(message)
         rejection_messages.append(message)
 
+    if len(rejection_messages) == 0:
+        rejection_messages = None
     return rejection_messages
 
 
 def tick(systems):
+    print("EXECUTING")
     mod_requirements = monitor(systems)
     resolutions, violations, errors, rejections = analyse_and_plan(mod_requirements)
     errors = execute(resolutions, violations, errors, rejections)
