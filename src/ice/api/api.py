@@ -7,14 +7,14 @@ TEMP_CONFIG = {
         {"name": "s3"},
     ],
     "capabilities": [
-        {"name": "c1", "src": "s1", "origin": "src", "script": "exit 0"},
-        {"name": "c2", "src": "s1", "state": True},
-        {"name": "c3", "src": "s1", "state": True},
+        {"name": "c1", "system": "s1", "origin": "system", "script": "exit 0"},
+        {"name": "c2", "system": "s1", "state": True},
+        {"name": "c3", "system": "s1", "state": True},
     ],
     "requirements": [
-        {"name": "r1", "src": "s2",
+        {"name": "r1", "system": "s2",
             "contract": "((c1 or c2) and c3)"},
-        {"name": "r2", "src": "s2",
+        {"name": "r2", "system": "s2",
             "contract": "c2"},
     ],
 }
