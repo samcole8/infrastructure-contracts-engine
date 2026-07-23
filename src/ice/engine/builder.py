@@ -88,8 +88,7 @@ def build(configuration):
         system = systems_by_name[entry["system"]]
 
         # Set probe attributes
-        if script := entry.get("script", None):
-            cmd = script
+        if cmd := entry.get("cmd", None):
             # Resolve origin
             match origin_name := entry.get("origin", None):
                 case None:
