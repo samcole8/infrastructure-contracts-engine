@@ -91,11 +91,13 @@ def build(configuration):
         if script := entry.get("script", None):
             cmd = script
             # Resolve origin
-            match entry.get("origin", "system"):
-                case "system":
+            match origin_name := entry.get("origin", None):
+                case None:
                     origin = system
                 case "ice":
                     origin = local_system
+                case _:
+                    origin = systems_by_name[origin_name]
             capability = DynamicCapability(name, system, origin, cmd)
         else:
             # Set immutable state

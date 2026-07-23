@@ -7,7 +7,7 @@ TEMP_CONFIG = {
         {"name": "s3"},
     ],
     "capabilities": [
-        {"name": "c1", "system": "s1", "origin": "system", "script": "exit 0"},
+        {"name": "c1", "system": "s1", "origin": "s1", "script": "exit 0"},
         {"name": "c2", "system": "s1", "state": True},
         {"name": "c3", "system": "s1", "state": True},
     ],
