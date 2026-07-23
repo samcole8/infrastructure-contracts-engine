@@ -19,7 +19,6 @@ def line(level, r):
         "message": f"{r.name}: {level.lower()}",
         "requirement": r.name,
         "src": r.src.name,
-        "dst": r.dst.name,
         "trace": render(r.contract),
     })
 

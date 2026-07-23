@@ -83,10 +83,9 @@ def build(configuration):
         systems_by_name[name] = system
 
     for entry in configuration["capabilities"]:
-        # Get src/dst systems
+        # Get system
         name = entry["name"]
         src = systems_by_name[entry["src"]]
-        dst = systems_by_name[entry["dst"]]
 
         # Set probe attributes
         if script := entry.get("script", None):
@@ -95,15 +94,13 @@ def build(configuration):
             match entry.get("origin", "src"):
                 case "src":
                     origin = src
-                case "dst":
-                    origin = dst
                 case "ice":
                     origin = local_system
-            capability = DynamicCapability(name, src, dst, origin, cmd)
+            capability = DynamicCapability(name, src, origin, cmd)
         else:
             # Set immutable state
             origin = src
-            capability = Capability(name, src, dst, origin)
+            capability = Capability(name, src, origin)
             capability.state = entry["state"]
 
         # Add capability to capabilities_by_name
@@ -113,7 +110,6 @@ def build(configuration):
     for entry in configuration["requirements"]:
         name = entry["name"]
         src = systems_by_name[entry["src"]]
-        dst = systems_by_name[entry["dst"]]
 
         # Create contract
         tokens = tokenise(entry["contract"])
@@ -124,7 +120,7 @@ def build(configuration):
         capabilities = [capabilities_by_name[n] for n in capability_names]
 
         # Add requirement to system
-        requirement = Requirement(name, src, dst, capabilities, contract)
+        requirement = Requirement(name, src, capabilities, contract)
         src.requirements.append(requirement)
 
         # Create requirement-capability mapping
