@@ -8,7 +8,7 @@ TEMP_CONFIG = {
     ],
     "capabilities": [
         {"name": "c1", "system": "s1", "origin": "s1", "cmd": "exit 0"},
-        {"name": "c2", "system": "s1", "state": True},
+        {"name": "c2", "system": "s1", "state": False},
         {"name": "c3", "system": "s1", "state": True},
     ],
     "requirements": [
@@ -25,9 +25,10 @@ class API:
         sleep(1.0)
         return TEMP_CONFIG
 
-    def respond(self, msg):
+    def respond(self, passes, fails, errors):
         sleep(0.2)
-        if msg:
-            print("API REPORTING FAILURE")
+        alerts = fails + errors
+        if len(alerts) > 0:
+            print(f"API WARNING:\n{alerts}")
         else:
-            print("API REPORTING SUCCESS")
+            print("API OK")

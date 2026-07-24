@@ -1,7 +1,6 @@
 from ice.api import API
 from ice.engine.builder import build
 from ice.engine import Engine
-from ice.reporting import terraform
 
 INTERVAL = 60
 
@@ -15,11 +14,8 @@ def main():
         # Get systems and probes
         config = api.listen()
         systems = build(config)
-        errors = engine.reload(systems)
-        if errors:
-            api.respond(terraform.response(errors))
-        else:
-            api.respond(None)
+        passes, fails, errors = engine.reload(systems)
+        api.respond(passes, fails, errors)
 
 if __name__ == "__main__":
     main()

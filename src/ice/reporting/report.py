@@ -12,24 +12,24 @@ def render(node):
     if isinstance(node, Not):
         return f"not {render(node.operand)}"
 
-def line(level, r):
+def line(status, r):
     return json.dumps({
         "timestamp": time.time(),
-        "level": level,
-        "message": f"{r.name}: {level.lower()}",
+        "status": status,
+        "message": f"{r.name}: {status.lower()}",
         "requirement": r.name,
         "system": r.src.name,
         "trace": render(r.contract),
     })
 
-def resolution(r):
-    return line("OK", r)
+def pass_jsonl(r):
+    return line("PASS", r)
 
-def violation(r):
-    return line("VIOLATED", r)
+def fail_jsonl(r):
+    return line("FAIL", r)
 
-def error(r):
-    return line("UNRESOLVED", r)
+def error_jsonl(r):
+    return line("ERROR", r)
 
-def rejection(r):
-    return line("BLOCKING", r)
+# def rejection(r):
+#     return line("BLOCKING", r)

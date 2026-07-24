@@ -19,16 +19,10 @@ class Engine:
     def reload(self, systems):
         print("ENGINE RELOAD")
         self.stop()
-
-        errors = tick(systems)
-        
-        if errors:
-            print("RELOAD FAIL")
-        else:
-            self.systems = systems
-            print("RELOAD SUCCESS")
-            self.start() # de-indent when engine is threaded
-        return errors
+        self.systems = systems
+        passes, fails, errors = tick(systems)
+        # self.start() # de-comment when engine is threaded
+        return passes, fails, errors
 
     def start(self):
         self.running = True
